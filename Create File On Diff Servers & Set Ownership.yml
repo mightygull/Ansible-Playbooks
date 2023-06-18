@@ -1,0 +1,46 @@
+- name: Create blank file
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Create empty nfsshare.txt on all app servers
+      file:
+        path: /opt/opt.txt
+        state: touch
+        mode: '0744'
+
+- name: Change file ownership
+  hosts: stapp01
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Change file ownership to tony
+      file:
+        path: /opt/opt.txt
+        state: touch
+        owner: tony
+        group: tony
+  
+- name: Change file ownership
+  hosts: stapp02
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Change file ownership to steve
+      file:
+        path: /opt/opt.txt
+        state: touch
+        owner: steve
+        group: steve
+
+- name: Change file ownership
+  hosts: stapp03
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Change file ownership to banner
+      file:
+        path: /opt/opt.txt
+        state: touch
+        owner: banner
+        group: banner
