@@ -1,0 +1,35 @@
+---
+- name: Configure Apache and PHP on App Server 1
+  hosts: stapp01
+  become: true
+  tasks:
+    - name: Install httpd and php packages
+      yum:
+        name: ['httpd', 'php']
+        state: present
+
+    - name: Change default document root
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        regexp: '^DocumentRoot'
+        line: 'DocumentRoot "/var/www/html/myroot"'
+
+    - name: Create document root directory
+      file:
+        path: /var/www/html/myroot
+        state: directory
+        mode: '0755'
+
+    - name: Copy phpinfo.php template
+      template:
+        src: templates/phpinfo.php.j2
+        dest: /var/www/html/myroot/phpinfo.php
+        owner: apache
+        group: apache
+        mode: '0644'
+
+    - name: Start and enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: true
