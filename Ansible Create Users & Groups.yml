@@ -1,0 +1,45 @@
+- name: Create Linux user accounts and groups from YAML file
+  hosts: stapp01
+  become: yes
+  become_method: sudo
+  vars:
+    ansible_become_password: Ir0nM@n
+    secrets_dir: ~/playbooks/secrets/
+  tasks:
+    - name: Read YAML file
+      include_vars:
+        file: ~/playbooks/data/users.yml
+        name: my_var
+
+    - name: Read encrypted password files
+      include_vars:
+        file: "{{ secrets_dir }}/{{ item }}_password.yml"
+        name: "{{ item }}_password"
+      with_items:
+        - admins
+        - developers
+
+    - name: Create Linux group for admins
+      group:
+        name: admins
+
+    - name: Create Linux group for developers
+      group:
+        name: developers
+
+    - name: Create Linux user accounts for admins, add them to the admins group, set their home directory, and set their password
+      user:
+        name: "{{ item }}"
+        groups: 
+          - admins
+          - wheel
+        password: "{{ admins_password.password }}"
+      with_items: "{{ my_var.admins }}"
+
+    - name: Create Linux user accounts for developers, add them to the developers group, set their home directory, and set their password
+      user:
+        name: "{{ item }}"
+        groups: developers
+        home: /var/www
+        password: "{{ developers_password.password }}"
+      with_items: "{{ my_var.developers }}"
