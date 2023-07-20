@@ -1,0 +1,11 @@
+- name: Extract xfusion.zip archive on all app servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Unzip xfusion.zip archive in /opt/security/ location
+      unarchive:
+        src: /usr/src/security/xfusion.zip
+        dest: /opt/security/
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: "0644"
