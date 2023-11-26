@@ -1,0 +1,9 @@
+---
+- name: Install Apache (httpd) Package
+  hosts: all
+  become: true
+  tasks:
+    - name: Install httpd Package
+      yum:
+        name: httpd
+        state: present
